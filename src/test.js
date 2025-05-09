@@ -379,7 +379,7 @@ describe("Проверка автокомлита и подсказок реда
       });
 
       it("проверка получения существующего текста запроса", function () {        
-      	editor.setPosition(new monaco.Position(10, 1));
+      	editor.setPosition(new monaco.Position(18, 1));
         assert.notEqual(getQuery(), null);
       });
 
@@ -444,7 +444,7 @@ describe("Проверка автокомлита и подсказок реда
       });
 
       it("проверка получения существующей форматной строки", function () {        
-      	editor.setPosition(new monaco.Position(47, 33));
+      	editor.setPosition(new monaco.Position(56, 33));
         assert.notEqual(getFormatString(), null);
       });
 
@@ -478,7 +478,7 @@ describe("Проверка автокомлита и подсказок реда
       it("проверка подсказки переопределенных параметров для функции Состояние", function () {
         let strJSON = '{ "Состояние": [ { "label": "(Первый, Второй)", "documentation": "Описание сигнатуры", "parameters": [ { "label": "Первый", "documentation": "Описание первого" }, { "label": "Второй", "documentation": "Описание второго" } ] } ] }';
         assert.equal(setCustomSignatures(strJSON), true);        
-        let position = new monaco.Position(28, 12);
+        let position = new monaco.Position(37, 12);
         let model = editor.getModel();
         editor.setPosition(position);
         bsl = new bslHelper(model, position);
@@ -794,7 +794,7 @@ describe("Проверка автокомлита и подсказок реда
 
       it("проверка подсказки определяемой по стеку для метаданных (первый потомок)", function () {
         
-        let position = new monaco.Position(95, 17);
+        let position = new monaco.Position(104, 17);
         let model = editor.getModel();
         editor.setPosition(position);
         bsl = new bslHelper(model, position);
@@ -808,7 +808,7 @@ describe("Проверка автокомлита и подсказок реда
 
       it("проверка подсказки определяемой по стеку для метаданных (второй потомок)", function () {
         
-        let position = new monaco.Position(100, 19);
+        let position = new monaco.Position(109, 19);
         let model = editor.getModel();
         editor.setPosition(position);
         let bsl = new bslHelper(model, position);
@@ -824,9 +824,9 @@ describe("Проверка автокомлита и подсказок реда
         
         let map = new Map();
         map.set('товарссылка', {list:[], ref: 'catalogs.Товары', sig: null});
-        contextData.set(102, map);
+        contextData.set(111, map);
 
-        let position = new monaco.Position(104, 18);
+        let position = new monaco.Position(113, 18);
         let model = editor.getModel();
         editor.setPosition(position);
         let bsl = new bslHelper(model, position);
@@ -840,7 +840,7 @@ describe("Проверка автокомлита и подсказок реда
 
       it("проверка подсказки определяемой по стеку для пользовательских объектов", function () {
 
-        let position = new monaco.Position(107, 24);
+        let position = new monaco.Position(116, 24);
         let model = editor.getModel();
         editor.setPosition(position);
         let bsl = new bslHelper(model, position);
@@ -853,7 +853,7 @@ describe("Проверка автокомлита и подсказок реда
 
       it("проверка подсказки определяемой по стеку для классов", function () {
 
-        let position = new monaco.Position(114, 12);
+        let position = new monaco.Position(123, 12);
         let model = editor.getModel();
         editor.setPosition(position);
         bsl = new bslHelper(model, position);
@@ -965,7 +965,7 @@ describe("Проверка автокомлита и подсказок реда
 
       it("проверка подсказки описания метаданных", function () {
 
-        let position = new monaco.Position(151, 13);
+        let position = new monaco.Position(160, 13);
         let model = editor.getModel();
         editor.setPosition(position);
         bsl = new bslHelper(model, position);

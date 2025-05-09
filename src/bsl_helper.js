@@ -7118,6 +7118,54 @@ class bslHelper {
 	}
 
 	/**
+	 * Finds blocks with procedure`s description
+	 * 
+	 * @param {ITextModel} current model of editor
+	 * 
+	 * @returns {array} - array of folding ranges
+	 */	
+	static getRangesForProcedureDescription(model) {
+
+		let ranges = [];
+		let match = null;
+		const matches = Finder.findMatches(model, "^\\s*(?:процедура|функция|procedure|function)");
+
+		if (matches) {
+
+			for (let idx = 0; idx < matches.length; idx++) {
+				
+				match = matches[idx];
+				let range = {
+					kind: monaco.languages.FoldingRangeKind.Region,
+					start: match.range.endLineNumber - 2,
+					end: match.range.endLineNumber - 1
+				}
+
+				let do_search = true;
+				while (do_search && 1 <= range.start) {
+					const content = editor.getModel().getLineContent(range.start);
+					if (/\s*\/\/\s*/.test(content))
+						range.start--;
+					else
+						do_search = false;
+					
+				}
+
+				range.start++;
+
+				if (0 < range.end - range.start)
+					ranges.push(range);
+
+			}
+
+		}
+
+
+		return ranges;		
+
+	}
+
+	/**
 	 * Provider for folding blocks
 	 * @param {ITextModel} current model of editor
 	 * 
@@ -7126,6 +7174,7 @@ class bslHelper {
 	static getFoldingRanges(model) {
 
 		let ranges = this.getRangesForRegexp(model, "\"(?:\\n|\\r|\\|)*(?:выбрать|select)(?:(?:\\s|\\S|\"\")*?)?\"");
+		ranges = ranges.concat(this.getRangesForProcedureDescription(model));
 		ranges = ranges.concat(this.getRangesForRegexp(model, "(?:^|\\b)(?:функция|процедура).*\\([\\s\\S]*?(?:конецпроцедуры|конецфункции)"));
 		ranges = ranges.concat(this.getRangesForConstruction(model, "пока|while", "конеццикла|enddo", true));
 		ranges = ranges.concat(this.getRangesForConstruction(model, "для .*(?:по|из) .*|for .* (?:to|each) .*", "конеццикла|enddo", true));
@@ -8178,6 +8227,9 @@ class bslHelper {
 	 */
 	provideDefinition() {
 
+		if (this.word)
+			this.generateDefinitionEvent();
+
 		let location = null;
 		let definition = this.getDefinition();
 
@@ -8186,9 +8238,7 @@ class bslHelper {
 			location = [{
 				uri: this.model.uri,
 				range: definition.range
-			}];
-
-			this.generateDefinitionEvent();
+			}];			
 
 			if (location && !ctrlPressed)
 				editor.definitionBreadcrumbs.push(this.position);
