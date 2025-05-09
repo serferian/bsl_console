@@ -2725,7 +2725,7 @@ define(['bslGlobals', 'bslMetadata', 'snippets', 'bsl_language', 'vs/editor/edit
 
   }
 
-  function getActiveDiffEditor() {
+  getActiveDiffEditor = function() {
 
     let active_editor = null;
 
@@ -2740,7 +2740,7 @@ define(['bslGlobals', 'bslMetadata', 'snippets', 'bsl_language', 'vs/editor/edit
 
   }
 
-  function getActiveEditor() {
+  getActiveEditor = function() {
 
     return editor.navi ? getActiveDiffEditor() : editor;
 
