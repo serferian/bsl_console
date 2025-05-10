@@ -667,7 +667,7 @@ define(['bslGlobals', 'bslMetadata', 'snippets', 'bsl_language', 'vs/editor/edit
 
   }
 
-  compare = function (text, sideBySide, highlight, markLines = true, ignoreWhitespace = true) {
+  compare = function (text, sideBySide, highlight, markLines = true, ignoreWhitespace = true, newOriginalText = "") {
     
     let language_id = getCurrentLanguageId();
     let currentTheme = getCurrentThemeName();
@@ -687,7 +687,8 @@ define(['bslGlobals', 'bslMetadata', 'snippets', 'bsl_language', 'vs/editor/edit
         language_id = 'xml';
         currentTheme = 'vs';
       }
-      
+      if (newOriginalText)
+        originalText = newOriginalText;
       let originalModel = originalText ? monaco.editor.createModel(originalText) : monaco.editor.createModel(editor.getModel().getValue());
       let modifiedModel = monaco.editor.createModel(text);
       originalText = originalModel.getValue();
