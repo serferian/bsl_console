@@ -487,29 +487,28 @@ define(['bslGlobals', 'bslMetadata', 'snippets', 'bsl_language', 'vs/editor/edit
 
   }
 
-  setSelection = function(startLineNumber, startColumn, endLineNumber, endColumn) {
-    
+  setSelection = function(startLineNumber, startColumn, endLineNumber, endColumn, revealStart = false) {
+    let ActiveEditor = getActiveEditor();
     if (endLineNumber <= getLineCount()) {
       let range = new monaco.Range(startLineNumber, startColumn, endLineNumber, endColumn);
-      editor.setSelection(range);
-      editor.revealPositionInCenterIfOutsideViewport(range.getEndPosition());
+      ActiveEditor.setSelection(range);
+      let postion = revealStart ? range.getStartPosition() : range.getEndPosition();
+      ActiveEditor.revealPositionInCenterIfOutsideViewport(postion);
       return true;
     }
     else
       return false;
-
   }
 
-  setSelectionByLength = function(start, end) {
-    
-    let startPosition = editor.getModel().getPositionAt(start - 1);
-    let endPosition = editor.getModel().getPositionAt(end - 1);
+  setSelectionByLength = function(start, end, revealStart = false) {
+    let ActiveEditor = getActiveEditor();
+    let startPosition = ActiveEditor.getModel().getPositionAt(start - 1);
+    let endPosition = ActiveEditor.getModel().getPositionAt(end - 1);
     let range = new monaco.Range(startPosition.lineNumber, startPosition.column, endPosition.lineNumber, endPosition.column);    
-    editor.setSelection(range);
-    editor.revealPositionInCenterIfOutsideViewport(endPosition);
-
+    ActiveEditor.setSelection(range);
+    let postion = revealStart ? range.getStartPosition() : range.getEndPosition();
+    ActiveEditor.revealPositionInCenterIfOutsideViewport(postion);
     return true;
-
   }
 
   selectedText = function(text = undefined, keepSelection = false) {
@@ -666,7 +665,7 @@ define(['bslGlobals', 'bslMetadata', 'snippets', 'bsl_language', 'vs/editor/edit
 
   }
 
-  compare = function (text, sideBySide, highlight, markLines = true, ignoreWhitespace = true) {
+  compare = function (text, sideBySide, highlight, markLines = true, ignoreWhitespace = true, newOriginalText = "") {
     
     let language_id = getCurrentLanguageId();
     let currentTheme = getCurrentThemeName();
@@ -686,7 +685,8 @@ define(['bslGlobals', 'bslMetadata', 'snippets', 'bsl_language', 'vs/editor/edit
         language_id = 'xml';
         currentTheme = 'vs';
       }
-      
+      if (newOriginalText)
+        originalText = newOriginalText;
       let originalModel = originalText ? monaco.editor.createModel(originalText) : monaco.editor.createModel(editor.getModel().getValue());
       let modifiedModel = monaco.editor.createModel(text);
       originalText = originalModel.getValue();
@@ -2883,22 +2883,22 @@ define(['bslGlobals', 'bslMetadata', 'snippets', 'bsl_language', 'vs/editor/edit
 
   }
 
-  function getActiveDiffEditor() {
-
+  getActiveDiffEditor = function() {
     let active_editor = null;
-
-    if (editor.getModifiedEditor().diffDecor.position)
+    if (editor.getModifiedEditor().hasTextFocus())
+      active_editor = editor.getModifiedEditor();
+    else if (editor.getOriginalEditor().hasTextFocus())
+      active_editor = editor.getOriginalEditor();
+    else if (editor.getModifiedEditor().diffDecor.position)
       active_editor = editor.getModifiedEditor();
     else if (editor.getOriginalEditor().diffDecor.position)
       active_editor = editor.getOriginalEditor();
     else
-      active_editor = editor.getModifiedEditor().hasTextFocus() ? editor.getModifiedEditor() : editor.getOriginalEditor();
-
+      active_editor = editor.getOriginalEditor();
     return active_editor;
-
   }
 
-  function getActiveEditor() {
+  getActiveEditor = function() {
 
     return editor.navi ? getActiveDiffEditor() : editor;
 
